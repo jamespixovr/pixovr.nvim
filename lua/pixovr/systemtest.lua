@@ -56,6 +56,16 @@ local function isCucumberFileType()
   return true
 end
 
+local function isGolangFile()
+  local filetype = vim.bo.filetype
+  if filetype ~= "go" then
+    u.notify(name .. ":", "the current file is not supported", "warn")
+    return false
+  end
+
+  return true
+end
+
 M.systemTestLocal = function()
   if not isCucumberFileType() then
     return
@@ -82,5 +92,41 @@ M.systemTestLifecycle = function()
   input.selectLifecycle(callback_fn)
 end
 
+M.ginkgoBookstrap = function()
+  if not isGolangFile() then
+    return
+  end
+
+  local dir = vim.fn.expand('%:p:h')
+
+  local user_cmd = "cd " .. dir .. " && ginkgo bookstrap"
+
+  local task = overseer.new_task({
+    cmd = user_cmd,
+    name = name,
+    components = { 'default' }
+  })
+  task:start()
+end
+
+M.ginkgoGenerate = function()
+  if not isGolangFile() then
+    return
+  end
+
+  local dir = vim.fn.expand('%:p:h')
+
+  local function callback_fn(fileName)
+    local user_cmd = "cd " .. dir .. " && ginkgo generate" .. " " .. fileName
+    local task = overseer.new_task({
+      cmd = user_cmd,
+      name = name,
+      components = { 'default' }
+    })
+    task:start()
+  end
+
+  input.trigger_input(callback_fn)
+end
 
 return M
