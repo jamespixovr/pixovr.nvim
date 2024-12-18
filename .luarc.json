@@ -1,5 +1,11 @@
 {
-    "diagnostics.disable": [
-        "no-unknown"
-    ]
+  "runtime": {
+    "version": "LuaJIT",
+    "pathStrict": true
+  },
+  "type": {
+    "checkTableShape": true
+  },
+  "diagnostics.disable": ["no-unknown"],
+  "diagnostics.globals": ["vim"]
 }
